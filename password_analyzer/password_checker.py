@@ -45,3 +45,5 @@ def main():
     check_common_passwords(password)
     strength = check_password_strength(password)
     print(f"Password strength: {strength}")
+
+main()
