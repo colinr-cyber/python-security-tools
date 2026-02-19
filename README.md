@@ -2,6 +2,7 @@
 
 Beginner level Python tools demonstrating security concepts.
 
-## Tools Included
+## Tools Include
+-Password Strength
 
 ## Security Concepts Covered
