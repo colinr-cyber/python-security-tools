@@ -1,14 +1,22 @@
 import string
+import sys
+from pathlib import Path
 
-def check_common_passwords(password):
-    with open("common_passwords.txt", "r") as file:
-        common_passwords = set(line.strip() for line in file)
+
+def check_common_passwords(password: str) -> None:
+    base = Path(__file__).resolve().parent
+    path = base / "common_passwords.txt"
+    try:
+        with path.open("r", encoding="utf-8") as file:
+            common_passwords = set(line.strip() for line in file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Common passwords file not found: {path}")
     if password in common_passwords:
-        exit("Password is too common. Please choose a different one.")
-    return False
+        raise ValueError("Password is too common. Please choose a different one.")
 
-def check_password_strength(password):
-    score = 0 
+
+def check_password_strength(password: str) -> str:
+    score = 0
     length = len(password)
 
     uppercase = any(char.isupper() for char in password)
@@ -19,11 +27,11 @@ def check_password_strength(password):
     character_types = [uppercase, lowercase, digits, special_characters]
 
     if length < 8:
-        exit("Password must be at least 8 characters long.")
+        raise ValueError("Password must be at least 8 characters long.")
     if length >= 8:
         score += 1
     if length >= 12:
-        score += 1    
+        score += 1
     if length >= 16:
         score += 1
     if length >= 20:
@@ -40,10 +48,20 @@ def check_password_strength(password):
     else:
         return "Very Strong"
 
-def main():
-    password = input("Enter a password to check: ")
-    check_common_passwords(password)
-    strength = check_password_strength(password)
-    print(f"Password strength: {strength}")
 
-main()
+def main() -> None:
+    try:
+        password = input("Enter a password to check: ")
+        check_common_passwords(password)
+        strength = check_password_strength(password)
+        print(f"Password strength: {strength}")
+    except (ValueError, FileNotFoundError) as e:
+        print(e)
+        sys.exit(1)
+    except KeyboardInterrupt:
+        print("\nInterrupted by user.")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
